@@ -107,14 +107,14 @@ else
 fi
 
 log "Checking local Gunicorn endpoint: $LOCAL_URL"
-local_status="$(curl --silent --show-error --max-time 10 --output /dev/null --write-out '%{http_code}' "$LOCAL_URL" || true)"
+local_status="$(curl --silent --show-error --fail --retry 10 --retry-delay 1 --retry-all-errors --max-time 10 --output /dev/null --write-out '%{http_code}' "$LOCAL_URL" || true)"
 if [ "$local_status" != "200" ]; then
   "${SYSTEMCTL[@]}" --no-pager --full status "$SERVICE_NAME" || true
   fail "Local service returned HTTP $local_status. Check systemd and Gunicorn before checking Nginx."
 fi
 
 log "Checking public endpoint: $HEALTH_URL"
-public_status="$(curl --silent --show-error --max-time 20 --output /dev/null --write-out '%{http_code}' "$HEALTH_URL" || true)"
+public_status="$(curl --silent --show-error --fail --retry 10 --retry-delay 1 --retry-all-errors --max-time 20 --output /dev/null --write-out '%{http_code}' "$HEALTH_URL" || true)"
 if [ "$public_status" != "200" ]; then
   fail "Local service is healthy, but public endpoint returned HTTP $public_status. Check Nginx, Cloudflare, and DNS routing to 127.0.0.1:8000."
 fi
