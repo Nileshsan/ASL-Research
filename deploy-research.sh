@@ -34,6 +34,7 @@ VENV_DIR="${VENV_DIR:-$REPO_DIR/.venv}"
 PUBLIC_URL="${PUBLIC_URL:-https://research.appliedsentiencelabs.com}"
 HEALTH_PATH="${HEALTH_PATH:-/sitemap.xml}"
 HEALTH_URL="${PUBLIC_URL%/}${HEALTH_PATH}"
+LOCAL_URL="${LOCAL_URL:-http://127.0.0.1:8000${HEALTH_PATH}}"
 GIT_BRANCH="${GIT_BRANCH:-main}"
 
 log() { printf '\n[%s] %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*"; }
@@ -43,6 +44,7 @@ trap 'fail "Deployment failed at line $LINENO."' ERR
 cd "$REPO_DIR" 2>/dev/null || fail "Repository directory does not exist: $REPO_DIR"
 command -v python3 >/dev/null 2>&1 || fail "python3 is not installed or not on PATH."
 command -v systemctl >/dev/null 2>&1 || fail "systemctl is required for this deployment script."
+command -v curl >/dev/null 2>&1 || fail "curl is not installed or not on PATH."
 test -f requirements.txt || fail "Missing requirements.txt"
 test -f app.py || fail "Missing app.py"
 
@@ -97,8 +99,17 @@ else
   restart_service
 fi
 
+log "Checking local Gunicorn endpoint: $LOCAL_URL"
+local_status="$(curl --silent --show-error --max-time 10 --output /dev/null --write-out '%{http_code}' "$LOCAL_URL" || true)"
+if [ "$local_status" != "200" ]; then
+  systemctl --no-pager --full status "$SERVICE_NAME" || true
+  fail "Local service returned HTTP $local_status. Check systemd and Gunicorn before checking Nginx."
+fi
+
 log "Checking public endpoint: $HEALTH_URL"
-command -v curl >/dev/null 2>&1 || fail "curl is not installed or not on PATH."
-curl --fail --silent --show-error --max-time 20 "$HEALTH_URL" >/dev/null
+public_status="$(curl --silent --show-error --max-time 20 --output /dev/null --write-out '%{http_code}' "$HEALTH_URL" || true)"
+if [ "$public_status" != "200" ]; then
+  fail "Local service is healthy, but public endpoint returned HTTP $public_status. Check Nginx, Cloudflare, and DNS routing to 127.0.0.1:8000."
+fi
 
 log "Deployment completed successfully"
