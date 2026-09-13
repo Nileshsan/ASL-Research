@@ -34,7 +34,7 @@ VENV_DIR="${VENV_DIR:-$REPO_DIR/.venv}"
 PUBLIC_URL="${PUBLIC_URL:-https://research.appliedsentiencelabs.com}"
 HEALTH_PATH="${HEALTH_PATH:-/sitemap.xml}"
 HEALTH_URL="${PUBLIC_URL%/}${HEALTH_PATH}"
-GIT_BRANCH="${GIT_BRANCH:-master}"
+GIT_BRANCH="${GIT_BRANCH:-main}"
 
 log() { printf '\n[%s] %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*"; }
 fail() { printf '\nERROR: %s\n' "$*" >&2; exit 1; }
