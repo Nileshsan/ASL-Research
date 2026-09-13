@@ -1,0 +1,20 @@
+[Unit]
+Description=Applied Sentience Labs Research Portal
+After=network.target
+
+[Service]
+Type=simple
+User=nilesh
+Group=nilesh
+WorkingDirectory=/home/nilesh/research-asl
+Environment="PATH=/home/nilesh/research-asl/.venv/bin"
+Environment="ASL_SITE_URL=https://research.appliedsentiencelabs.com"
+Environment="ASL_SECRET_KEY=replace-with-a-long-random-secret"
+Environment="ASL_ADMIN_USER=admin"
+Environment="ASL_ADMIN_PASS=replace-with-a-strong-password"
+ExecStart=/home/nilesh/research-asl/.venv/bin/gunicorn --workers 2 --bind 127.0.0.1:8000 --access-logfile - --error-logfile - app:app
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

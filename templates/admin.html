@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard — ASL Research{% endblock %}
+{% block content %}
+<section class="admin-shell">
+  <div class="admin-header">
+    <div>
+      <span class="eyebrow">Admin dashboard</span>
+      <h1>Manage research publications</h1>
+      <p>Upload PDFs, edit metadata, and update the publication catalog in one place.</p>
+    </div>
+    <a class="btn-secondary" href="{{ url_for('logout') }}">Logout</a>
+  </div>
+
+  <div class="admin-panel">
+    <div class="admin-form-card">
+      <h2>Save a publication</h2>
+      <form method="post" action="{{ url_for('save_publication') }}" enctype="multipart/form-data">
+        <input type="hidden" name="id" id="pubId" value="" />
+        <label>Title</label>
+        <input name="title" id="pubTitle" required />
+        <label>Authors</label>
+        <input name="authors" id="pubAuthors" required />
+        <label>Document type</label>
+        <input name="document_type" id="pubType" placeholder="Technical Report" />
+        <label>Access</label>
+        <input name="access" id="pubAccess" placeholder="Open Access" />
+        <label>Date</label>
+        <input name="date" id="pubDate" placeholder="November 2025" required />
+        <label>Abstract</label>
+        <textarea name="abstract" id="pubAbstract" rows="5"></textarea>
+        <label>Tags (comma separated)</label>
+        <input name="tags" id="pubTags" placeholder="Federated Learning, Edge Computing" />
+        <label>External link</label>
+        <input name="external_link" id="pubExternalLink" placeholder="https://github.com/..." />
+        <label>PDF upload</label>
+        <input type="file" name="pdf" accept="application/pdf" />
+        <button class="btn-primary" type="submit">Save publication</button>
+      </form>
+    </div>
+
+    <div class="admin-list-card">
+      <h2>Existing publications</h2>
+      <div class="publication-list">
+        {% for publication in publications %}
+        <div class="publication-list-item">
+          <div>
+            <strong>{{ publication.title }}</strong>
+            <div class="publication-author">{{ publication.authors }}</div>
+            <div class="publication-meta">{{ publication.document_type }} · {{ publication.date }}</div>
+          </div>
+          <div class="publication-actions">
+            <button class="btn-outline" type="button" data-publication="{{ publication | tojson | safe }}" onclick="editPublication(this)">Edit</button>
+            <form method="post" action="{{ url_for('delete_publication', publication_id=publication.id) }}" onsubmit="return confirm('Delete this publication?');">
+              <button class="btn-secondary" type="submit">Delete</button>
+            </form>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+function editPublication(button) {
+  const publication = JSON.parse(button.dataset.publication);
+  document.getElementById('pubId').value = publication.id;
+  document.getElementById('pubTitle').value = publication.title;
+  document.getElementById('pubAuthors').value = publication.authors;
+  document.getElementById('pubType').value = publication.document_type;
+  document.getElementById('pubAccess').value = publication.access;
+  document.getElementById('pubDate').value = publication.date;
+  document.getElementById('pubAbstract').value = publication.abstract;
+  document.getElementById('pubTags').value = publication.tags.join(', ');
+  document.getElementById('pubExternalLink').value = publication.external_link || '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+{% endblock %}

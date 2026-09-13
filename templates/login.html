@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Admin Login — ASL Research{% endblock %}
+{% block content %}
+<section class="auth-shell">
+  <div class="auth-card">
+    <span class="eyebrow">Admin sign in</span>
+    <h1>Secure admin access</h1>
+    <form method="post" action="{{ url_for('login') }}">
+      <label>Username</label>
+      <input name="username" type="text" autocomplete="username" required />
+      <label>Password</label>
+      <input name="password" type="password" autocomplete="current-password" required />
+      <button class="btn-primary" type="submit">Sign in</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

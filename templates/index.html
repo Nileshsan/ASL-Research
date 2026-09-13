@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block title %}Research archive | Applied Sentience Labs{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-kicker"><span class="status-dot"></span> ASL / RESEARCH ARCHIVE <span>EST. 2026 · MUMBAI</span></div>
+  <div class="hero-copy">
+    <h1>Where machines begin to comprehend.</h1>
+    <p>Research notes and technical reports from the lab behind applied AI products for sales, voice, and business intelligence.</p>
+  </div>
+  <div class="hero-actions">
+    {% if session.get('admin_logged_in') %}
+    <a class="btn-primary" href="{{ url_for('admin') }}">Open research portal <span>↗</span></a>
+    {% else %}
+    <a class="btn-primary" href="{{ url_for('login') }}">Team login <span>↗</span></a>
+    {% endif %}
+    <a class="btn-secondary" href="https://appliedsentiencelabs.com">Explore ASL <span>↗</span></a>
+  </div>
+</section>
+
+<section class="signal-grid" aria-label="Research archive overview">
+  <div><span class="signal-label">01 / FOCUS</span><strong>Applied intelligence</strong><p>Structure-aware models, agent systems, and the infrastructure that makes them useful.</p></div>
+  <div><span class="signal-label">02 / METHOD</span><strong>Research to production</strong><p>Ideas are tested against real conversations, real data, and real operating constraints.</p></div>
+  <div><span class="signal-label">03 / CATALOG</span><strong>{{ publications|length }} published work{% if publications|length != 1 %}s{% endif %}</strong><p>Open reports, implementation notes, and experiments from the ASL engineering team.</p></div>
+</section>
+
+<section class="archive-heading">
+  <div><span class="eyebrow">The archive</span><h2>Research, with the edges left visible.</h2></div>
+  <p>We publish enough detail for the work to be inspected, reused, and challenged. Start with the latest report.</p>
+</section>
+<section class="publications">
+  {% for publication in publications %}
+  <article class="publication-card">
+    <div class="publication-meta">
+      <span class="pub-tag">{{ publication.document_type or 'Technical Report' }}</span>
+      <span class="pub-access">{{ publication.access or 'Open Access' }}</span>
+      <span class="pub-date">{{ publication.date }}</span>
+    </div>
+    <div class="publication-index">{{ '%02d'|format(loop.index) }}</div>
+    <h2>{{ publication.title }}</h2>
+    <div class="publication-author">{{ publication.authors }}</div>
+    <p>{{ publication.abstract }}</p>
+    <div class="publication-tags">
+      {% for tag in publication.tags %}
+      <span>{{ tag }}</span>
+      {% endfor %}
+    </div>
+    <div class="publication-actions">
+      {% if publication.pdf_filename %}
+      <a class="btn-link" href="{{ url_for('paper_file', filename=publication.pdf_filename) }}">Download PDF</a>
+      {% endif %}
+      {% if publication.external_link %}
+      <a class="btn-link" href="{{ publication.external_link }}" target="_blank">GitHub Repository</a>
+      {% endif %}
+    </div>
+  </article>
+  {% else %}
+  <div class="empty-state"><span class="eyebrow">Archive opening soon</span><h2>The first report is being prepared.</h2><p>Return soon for technical work from the Applied Sentience Labs research team.</p></div>
+  {% endfor %}
+</section>
+
+<section class="network-strip">
+  <span class="eyebrow">The wider system</span>
+  <p>Research becomes useful when it reaches the work in front of you.</p>
+  <div class="network-links">
+    <a href="https://appliedsentiencelabs.com/">Applied Sentience Labs <span>Research lab · Product studio · AI partner ↗</span></a>
+    <a href="https://salesgents.appliedsentiencelabs.com/">Salesgents <span>WhatsApp AI sales operations ↗</span></a>
+    <a href="https://voiceage.in/">VoiceAge <span>Digital operator for business calls ↗</span></a>
+  </div>
+</section>
+
+<section class="product-system">
+  <div class="section-intro"><span class="eyebrow">Research in the wild</span><h2>One lab. Three ways to make intelligence useful.</h2><p>The archive documents the thinking. The product system puts it into motion across websites, WhatsApp, and voice.</p></div>
+  <div class="product-grid">
+    <a class="product-card product-card-main" href="https://appliedsentiencelabs.com/">
+      <div class="product-card-top"><span>01 / ASL</span><span>CORE LAB</span></div>
+      <h3>Applied Sentience Labs</h3><p>Research-backed AI systems and a product studio for teams building something real.</p><span class="product-link">Meet the lab ↗</span>
+    </a>
+    <a class="product-card" href="https://salesgents.appliedsentiencelabs.com/">
+      <div class="product-card-top"><span>02 / SAGE</span><span>WHATSAPP AI</span></div>
+      <h3>Salesgents</h3><p>Your AI sales executive on WhatsApp. First answer, lead qualification, and the next action.</p><span class="product-link">Explore Salesgents ↗</span>
+    </a>
+    <a class="product-card" href="https://voiceage.in/">
+      <div class="product-card-top"><span>03 / VOICEAGE</span><span>VOICE AI</span></div>
+      <h3>VoiceAge</h3><p>A digital operator for sales, support, and recovery in Hindi, English, and Hinglish.</p><span class="product-link">Explore VoiceAge ↗</span>
+    </a>
+  </div>
+</section>
+
+<section class="journey-section">
+  <div class="section-intro"><span class="eyebrow">From lab to live</span><h2>Ideas move through a working system.</h2></div>
+  <div class="journey-grid">
+    <div><strong>01</strong><h3>Understand</h3><p>We study how models represent structure, context, intent, and the messy details of real work.</p></div>
+    <div><strong>02</strong><h3>Build</h3><p>We turn those findings into dependable operators that can answer, qualify, route, and remember.</p></div>
+    <div><strong>03</strong><h3>Move forward</h3><p>Teams get a better first answer and a clearer next step, without giving up human control.</p></div>
+  </div>
+</section>
+
+<section class="contact-band">
+  <div><span class="eyebrow">Start a conversation</span><h2>Have a hard problem in front of you?</h2><p>Tell us what your customers, data, or team needs to understand better.</p></div>
+  <a class="btn-primary" href="mailto:nilesh@appliedsentiencelabs.com">Talk to ASL <span>↗</span></a>
+</section>
+{% endblock %}

@@ -1,0 +1,14 @@
+[
+  {
+    "id": "asl-tr-2025-001",
+    "title": "Robust Federated Edge Training with Chunked Secure Transfer and Heartbeat-Driven Reliability Management",
+    "authors": "Nilesh S. Sanyasi — Lead AI Engineer & Founder, Applied Sentience Labs",
+    "document_type": "Technical Report",
+    "access": "Open Access",
+    "date": "November 2025",
+    "abstract": "Federated Learning (FL) enables privacy-preserving collaborative training across distributed edge devices, but production deployments encounter critical operational challenges including unreliable connectivity, concurrent socket access races, and inefficient large-model transfers. This paper presents FET (Federated Edge Training), a production-grade FL framework addressing these challenges through heartbeat-driven liveness tracking, race-free socket lifecycle management, and authenticated chunked model transfer.",
+    "tags": ["Federated Learning", "Edge Computing", "Socket Synchronization", "Heartbeat Mechanisms", "Chunked Transfer"],
+    "external_link": "https://github.com/Nileshsan/Federated-Anomaly-Secure-Training-Protocol-",
+    "pdf_filename": "ASL-TR-2025-001-FAST.pdf"
+  }
+]
