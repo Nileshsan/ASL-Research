@@ -48,6 +48,13 @@ command -v curl >/dev/null 2>&1 || fail "curl is not installed or not on PATH."
 test -f requirements.txt || fail "Missing requirements.txt"
 test -f app.py || fail "Missing app.py"
 
+if [ "$EUID" -eq 0 ]; then
+  SYSTEMCTL=(systemctl)
+else
+  command -v sudo >/dev/null 2>&1 || fail "sudo is required when this script is not run as root."
+  SYSTEMCTL=(sudo systemctl)
+fi
+
 HAS_GIT=0
 if command -v git >/dev/null 2>&1 && git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   HAS_GIT=1
@@ -55,9 +62,9 @@ fi
 
 restart_service() {
   log "Restarting $SERVICE_NAME"
-  systemctl restart "$SERVICE_NAME"
-  systemctl is-active --quiet "$SERVICE_NAME" || {
-    systemctl --no-pager --full status "$SERVICE_NAME" || true
+  "${SYSTEMCTL[@]}" restart "$SERVICE_NAME"
+  "${SYSTEMCTL[@]}" is-active --quiet "$SERVICE_NAME" || {
+    "${SYSTEMCTL[@]}" --no-pager --full status "$SERVICE_NAME" || true
     fail "$SERVICE_NAME is not active."
   }
 }
@@ -102,7 +109,7 @@ fi
 log "Checking local Gunicorn endpoint: $LOCAL_URL"
 local_status="$(curl --silent --show-error --max-time 10 --output /dev/null --write-out '%{http_code}' "$LOCAL_URL" || true)"
 if [ "$local_status" != "200" ]; then
-  systemctl --no-pager --full status "$SERVICE_NAME" || true
+  "${SYSTEMCTL[@]}" --no-pager --full status "$SERVICE_NAME" || true
   fail "Local service returned HTTP $local_status. Check systemd and Gunicorn before checking Nginx."
 fi
 
