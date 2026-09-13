@@ -34,7 +34,8 @@ VENV_DIR="${VENV_DIR:-$REPO_DIR/.venv}"
 PUBLIC_URL="${PUBLIC_URL:-https://research.appliedsentiencelabs.com}"
 HEALTH_PATH="${HEALTH_PATH:-/sitemap.xml}"
 HEALTH_URL="${PUBLIC_URL%/}${HEALTH_PATH}"
-LOCAL_URL="${LOCAL_URL:-http://127.0.0.1:8000${HEALTH_PATH}}"
+LOCAL_PORT="${LOCAL_PORT:-8010}"
+LOCAL_URL="${LOCAL_URL:-http://127.0.0.1:${LOCAL_PORT}${HEALTH_PATH}}"
 GIT_BRANCH="${GIT_BRANCH:-main}"
 
 log() { printf '\n[%s] %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*"; }
@@ -116,7 +117,7 @@ fi
 log "Checking public endpoint: $HEALTH_URL"
 public_status="$(curl --silent --show-error --fail --retry 10 --retry-delay 1 --retry-all-errors --max-time 20 --output /dev/null --write-out '%{http_code}' "$HEALTH_URL" || true)"
 if [ "$public_status" != "200" ]; then
-  fail "Local service is healthy, but public endpoint returned HTTP $public_status. Check Nginx, Cloudflare, and DNS routing to 127.0.0.1:8000."
+  fail "Local service is healthy, but public endpoint returned HTTP $public_status. Check Nginx, Cloudflare, and DNS routing to 127.0.0.1:${LOCAL_PORT}."
 fi
 
 log "Deployment completed successfully"
